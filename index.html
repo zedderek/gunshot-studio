@@ -803,6 +803,53 @@
     .stage-contact h2 { margin: 12px 0 40px; font-size: clamp(42px, 7vw, 100px); line-height: .82; letter-spacing: -.08em; }
     .stage-contact .contact-links { border-color: #050505; }
     .stage-contact .contact-links a { border-color: #050505; }
+    .club-zed {
+      min-height: 100%;
+      padding: clamp(22px, 4vw, 48px);
+      background:
+        linear-gradient(rgba(5,5,5,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(5,5,5,.08) 1px, transparent 1px),
+        #d9ff3f;
+      background-size: 24px 24px;
+    }
+    .club-zed-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #050505;
+    }
+    .club-zed-head h2 {
+      margin: 8px 0 0;
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: .78;
+      letter-spacing: -.08em;
+    }
+    .club-zed-head p { max-width: 350px; font: 9px/1.7 "Space Mono", monospace; }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .video-card {
+      border: 3px solid #050505;
+      background: #ff5ab8;
+      box-shadow: 6px 6px 0 #70e1f5;
+    }
+    .video-frame { aspect-ratio: 16 / 9; background: #050505; }
+    .video-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .video-card h3 { margin: 0; padding: 10px; border-top: 3px solid #050505; font: 700 9px "Space Mono", monospace; }
+    .club-empty {
+      grid-column: 1 / -1;
+      padding: 36px;
+      border: 3px dashed #050505;
+      background: rgba(255,244,220,.82);
+      text-align: center;
+      font: 10px/1.8 "Space Mono", monospace;
+    }
+    .club-empty a { font-weight: 700; color: #2732d7; }
 
     .picture-widget {
       position: absolute;
@@ -842,7 +889,7 @@
     }
     .picture-controls {
       display: grid;
-      grid-template-columns: 38px 1fr;
+      grid-template-columns: 38px 38px 1fr;
       gap: 7px;
       padding: 0 10px 10px;
     }
@@ -1152,6 +1199,8 @@
       .stage-copy h1 { font-size: 60px; }
       .stage-gallery { grid-template-columns: repeat(2, 1fr); }
       .stage-gallery .art-card { min-height: 210px; }
+      .video-grid { grid-template-columns: 1fr; }
+      .club-zed-head { display: block; }
       .picture-widget { display: none; }
       .about-widget { left: 12px; bottom: 12px; }
       .window {
@@ -1255,6 +1304,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       <nav class="screen-tabs" id="screenDrag" aria-label="Content tabs">
         <button class="screen-tab active" data-tab="home" type="button">HOME.G</button>
         <button class="screen-tab" data-tab="gallery" type="button">PICTURES</button>
+        <button class="screen-tab" data-tab="club-zed" type="button">CLUB ZED</button>
         <button class="screen-tab" data-tab="contact" type="button">CONTACT</button>
         <span class="screen-meta">GUNSHOT.STUDIO / DISPLAY 01</span>
         <button class="module-min" data-minimize="screen" type="button" aria-label="Minimize main display">−</button>
@@ -1276,13 +1326,26 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
         <section class="tab-panel" data-panel="gallery">
           <div class="stage-gallery" id="archiveGallery"></div>
         </section>
+        <section class="tab-panel" data-panel="club-zed">
+          <div class="club-zed">
+            <header class="club-zed-head">
+              <div>
+                <div class="section-label">DJ SETS / EVENTS / VIDEO ARCHIVE</div>
+                <h2>CLUB<br>ZED</h2>
+              </div>
+              <p>Club Zed is the moving-image archive for GUNSHOT sets, event footage and transmissions from the dance floor.</p>
+            </header>
+            <div class="video-grid" id="clubZedGrid"></div>
+          </div>
+        </section>
         <section class="tab-panel" data-panel="contact">
           <div class="stage-contact">
             <div class="section-label">OPEN CHANNEL / CONTACT</div>
             <h2>TRANSMISSION<br>AVAILABLE.</h2>
             <div class="contact-links">
               <a href="https://soundcloud.com/6un5hot" target="_blank" rel="noreferrer">SoundCloud <span>↗</span></a>
-              <a href="https://instagram.com/" target="_blank" rel="noreferrer">Instagram <span>↗</span></a>
+              <a href="https://www.instagram.com/gunshottechno/" target="_blank" rel="noreferrer">Instagram · @gunshottechno <span>↗</span></a>
+              <a href="https://www.youtube.com/@gunshottechno" target="_blank" rel="noreferrer">YouTube · @gunshottechno <span>↗</span></a>
               <a href="mailto:hello@gunshot.studio">Email <span>↗</span></a>
             </div>
           </div>
@@ -1295,6 +1358,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       <div class="picture-preview" id="picturePreview"></div>
       <div class="picture-index" id="pictureName">IMPACT STUDY / 001</div>
       <div class="picture-controls">
+        <button class="box-btn" id="picturePrev" type="button" aria-label="Previous picture">←</button>
         <button class="box-btn" id="pictureNext" type="button" aria-label="Next picture">→</button>
         <button class="box-btn" id="pictureOpen" type="button">OPEN ARCHIVE</button>
       </div>
@@ -1308,11 +1372,14 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
         <button class="box-btn about-close" id="aboutClose" type="button">X</button>
         <div class="section-label">ABOUT.G / ARTIST FILE</div>
         <h2>WHO IS<br>GUNSHOT?</h2>
-        <p>GUNSHOT is an independent artist project moving through techno, image-making and digital world-building.</p>
-        <p>This website is a living audiovisual object: part archive, part music machine, part playable interface.</p>
+        <p>GUNSHOT is a multidisciplinary artist from Ankara, Turkey, currently based in New York. His practice moves between music production, DJing, visual art, creative direction, event hosting and the creation of new cultural formats.</p>
+        <p>Before committing fully to music, he studied computer engineering. Changing direction became one of the best decisions he ever made—and the technical background still shapes how he builds worlds around sound.</p>
+        <p>GUNSHOT.STUDIO is hand-built by the artist: part archive, part music machine, part playable interface, and a home for current work, Club Zed events and future launches.</p>
         <ul class="facts">
-          <li><span>DISCIPLINE</span> MUSIC / VISUAL ART</li>
-          <li><span>STATUS</span> INDEPENDENT</li>
+          <li><span>FROM</span> ANKARA, TURKEY</li>
+          <li><span>BASED</span> NEW YORK</li>
+          <li><span>PRACTICE</span> MUSIC / ART / DIRECTION</li>
+          <li><span>EVENTS</span> CLUB ZED</li>
           <li><span>SYSTEM</span> GUNSHOT.OS</li>
         </ul>
       </article>
@@ -1424,7 +1491,8 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       <div class="contact-links">
         <!-- Replace these links with your final accounts. -->
         <a href="https://soundcloud.com/6un5hot" target="_blank" rel="noreferrer">SoundCloud <span>↗</span></a>
-        <a href="https://instagram.com/" target="_blank" rel="noreferrer">Instagram <span>↗</span></a>
+        <a href="https://www.instagram.com/gunshottechno/" target="_blank" rel="noreferrer">Instagram · @gunshottechno <span>↗</span></a>
+        <a href="https://www.youtube.com/@gunshottechno" target="_blank" rel="noreferrer">YouTube · @gunshottechno <span>↗</span></a>
         <a href="mailto:hello@gunshot.studio">Email <span>↗</span></a>
       </div>
     </article>
@@ -1475,6 +1543,15 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
         // { title: "MY PHOTO / 007", src: "assets/archive/my-photo.jpg" }
       ];
 
+      /*
+       * Add Club Zed sets here using the YouTube video ID.
+       * Example URL: https://www.youtube.com/watch?v=ABC123
+       * Video ID: ABC123
+       */
+      const CLUB_ZED_VIDEOS = [
+        // { title: "CLUB ZED / SET 001", youtubeId: "ABC123" }
+      ];
+
       const content = {
         archive: { title: "ARCHIVE.DIR / IMAGE INDEX", template: "archiveTemplate", width: 980 },
         visuals: { title: "VISUALS.DIR / SELECTED WORK", template: "archiveTemplate", width: 920 },
@@ -1509,6 +1586,35 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
           card.style.setProperty("--art", archiveArt(item));
           card.addEventListener("click", () => openViewer(archiveArt(item)));
           gallery.append(card);
+        });
+      }
+
+      function renderClubZed() {
+        const grid = document.querySelector("#clubZedGrid");
+        grid.replaceChildren();
+        if (!CLUB_ZED_VIDEOS.length) {
+          const empty = document.createElement("div");
+          empty.className = "club-empty";
+          empty.innerHTML = `CLUB ZED VIDEO TRANSMISSIONS ARE BEING PREPARED.<br><a href="https://www.youtube.com/@gunshottechno" target="_blank" rel="noreferrer">VISIT @GUNSHOTTECHNO ON YOUTUBE ↗</a>`;
+          grid.append(empty);
+          return;
+        }
+        CLUB_ZED_VIDEOS.forEach(video => {
+          const card = document.createElement("article");
+          card.className = "video-card";
+          const frame = document.createElement("div");
+          frame.className = "video-frame";
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.youtubeId)}`;
+          iframe.title = video.title;
+          iframe.loading = "lazy";
+          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          iframe.allowFullscreen = true;
+          const title = document.createElement("h3");
+          title.textContent = video.title;
+          frame.append(iframe);
+          card.append(frame, title);
+          grid.append(card);
         });
       }
 
@@ -1945,6 +2051,10 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
           pictureCount.textContent = `${String(pictureIndex + 1).padStart(2, "0")}/${String(ARCHIVE_IMAGES.length).padStart(2, "0")}`;
         };
         renderPreview();
+        document.querySelector("#picturePrev").addEventListener("click", () => {
+          pictureIndex = (pictureIndex - 1 + ARCHIVE_IMAGES.length) % ARCHIVE_IMAGES.length;
+          renderPreview();
+        });
         document.querySelector("#pictureNext").addEventListener("click", () => {
           pictureIndex = (pictureIndex + 1) % ARCHIVE_IMAGES.length;
           renderPreview();
@@ -2032,6 +2142,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       initAudioWidget();
       makeAudioDraggable();
       renderArchive();
+      renderClubZed();
       initModularWorkspace();
       initWidgetControls();
       start();
