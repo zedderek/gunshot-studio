@@ -287,30 +287,44 @@
       overflow: hidden;
       display: flex;
       align-items: center;
-      background: rgba(112,225,245,.035);
+      background: linear-gradient(90deg,rgba(255,31,93,.06),rgba(65,215,255,.06),rgba(202,255,65,.06));
       color: #82949a;
       font: 8px "Space Mono", monospace;
       letter-spacing: .28em;
       white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.035), inset 0 -1px 0 rgba(255,255,255,.025);
     }
     .love-track {
-      display: inline-flex;
+      display: flex;
+      flex: 0 0 auto;
       width: max-content;
-      animation: loveScroll 28s linear infinite;
+      animation: loveScroll var(--ticker-duration, 28s) linear infinite;
       will-change: transform;
     }
-    .love-track span {
+    .love-sequence {
+      display: flex;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+    .love-word {
       display: inline-block;
-      padding-right: 34px;
-      background: linear-gradient(90deg,#66828a,#a47c94,#7d8c69,#66828a);
-      background-size: 300% 100%;
+      flex: 0 0 auto;
+      padding-right: 30px;
+      background: linear-gradient(90deg,#ff315f,#ffb82e,#d7ff3f,#35f4c3,#42caff,#a879ff,#ff4dc4,#ff315f);
+      background-size: 500% 100%;
       color: transparent;
       -webkit-background-clip: text;
       background-clip: text;
-      animation: loveColor 9s linear infinite;
+      animation: loveColor 5s linear infinite, loveGlow 1.4s ease-in-out infinite alternate;
     }
-    @keyframes loveScroll { to { transform: translateX(-50%); } }
-    @keyframes loveColor { to { background-position: 300% 0; } }
+    .love-word:nth-child(3n+2) { animation-delay: -.7s, -.35s; }
+    .love-word:nth-child(3n) { animation-delay: -1.4s, -.7s; }
+    @keyframes loveScroll { to { transform: translateX(calc(-1 * var(--ticker-distance, 50%))); } }
+    @keyframes loveColor { to { background-position: 500% 0; } }
+    @keyframes loveGlow {
+      from { filter: brightness(.82) saturate(1.05) drop-shadow(0 0 1px rgba(255,255,255,.12)); }
+      to { filter: brightness(1.22) saturate(1.5) drop-shadow(0 0 5px currentColor); }
+    }
     .ghost-btn {
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -1210,10 +1224,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
         </div>
       </div>
       <div class="love-ticker" aria-hidden="true">
-        <div class="love-track">
-          <span>INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · </span>
-          <span>INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · INFINITE LOVE · </span>
-        </div>
+        <div class="love-track" id="loveTrack"></div>
       </div>
     </header>
 
@@ -1751,6 +1762,45 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
         addEventListener("pointerup", () => { cursor.style.transform = "translate(-50%,-50%) scale(1)"; });
       }
 
+      function initInfiniteLoveTicker() {
+        const ticker = document.querySelector(".love-ticker");
+        const track = document.querySelector("#loveTrack");
+        let resizeTimer;
+
+        const buildSequence = () => {
+          const sequence = document.createElement("div");
+          sequence.className = "love-sequence";
+          for (let index = 0; index < 14; index += 1) {
+            const word = document.createElement("span");
+            word.className = "love-word";
+            word.textContent = "INFINITE LOVE ·";
+            sequence.append(word);
+          }
+          return sequence;
+        };
+
+        const rebuild = () => {
+          track.replaceChildren();
+          const sequence = buildSequence();
+          track.append(sequence);
+          while (sequence.scrollWidth < ticker.clientWidth * 1.35) {
+            sequence.append(...Array.from(buildSequence().children));
+          }
+          const clone = sequence.cloneNode(true);
+          clone.setAttribute("aria-hidden", "true");
+          track.append(clone);
+          const distance = sequence.getBoundingClientRect().width;
+          track.style.setProperty("--ticker-distance", `${distance}px`);
+          track.style.setProperty("--ticker-duration", `${Math.max(18, distance / 48)}s`);
+        };
+
+        rebuild();
+        addEventListener("resize", () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(rebuild, 180);
+        });
+      }
+
       function addBootLine(html) {
         const line = document.createElement("div");
         line.className = "boot-line";
@@ -1961,6 +2011,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       addEventListener("offline", updateNetworkState);
       initTelemetry();
       initFpsCursor();
+      initInfiniteLoveTicker();
       initAudioWidget();
       makeAudioDraggable();
       renderArchive();
