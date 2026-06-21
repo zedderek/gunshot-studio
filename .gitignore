@@ -1,0 +1,16 @@
+# Codex/local workspace metadata
+.agents/
+.codex/
+work/
+outputs/
+
+# Generated logo intermediates not used by the live website
+assets/gunshot-logo-chroma.png
+assets/gunshot-logo.png
+assets/gunshot-logo-web.png
+assets/gunshot-logo-icon.png
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini
