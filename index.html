@@ -833,7 +833,11 @@
       aspect-ratio: 4/3;
       margin: 10px;
       border: 3px solid #050505;
-      background: var(--preview-art, linear-gradient(145deg,#ef3a22,#111));
+      background-color: #101515;
+      background-image: var(--preview-art, linear-gradient(145deg,#ef3a22,#111));
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
       transition: background .25s;
     }
     .picture-controls {
@@ -1033,7 +1037,11 @@
     .art-card::before {
       content: "";
       position: absolute; inset: 0;
-      background: var(--art);
+      background-color: #101515;
+      background-image: var(--art);
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
       transition: transform .6s var(--ease), filter .6s;
     }
     .art-card:hover::before { transform: scale(1.045); filter: contrast(1.12); }
@@ -1080,7 +1088,15 @@
       cursor: grab;
     }
     .viewer-head:active { cursor: grabbing; }
-    .viewer-art { width: 100%; height: min(680px, 68vh); background: var(--art); }
+    .viewer-art {
+      width: 100%;
+      height: min(680px, 68vh);
+      background-color: #080b0b;
+      background-image: var(--art);
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
     .viewer-close { margin-left: 6px; }
 
     /* TEXT WINDOWS */
@@ -1479,7 +1495,7 @@ NETWORK ADAPTER ................. <b>INITIALIZING</b></div>
       }
 
       function archiveArt(item) {
-        return item.src ? `url("${item.src}") center / cover no-repeat` : item.fallback;
+        return item.src ? `url("${item.src}")` : item.fallback;
       }
 
       function renderArchive() {
